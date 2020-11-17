@@ -21,12 +21,20 @@ if (!empty($extraColumns)) {
     $columns = array_merge($columns, $extraColumns);
 }
 $columns[] = [
-    'class' => 'yii\grid\ActionColumn',
-    'template' => '{view}'
+        'class'          => 'yii\grid\ActionColumn',
+        'template'       => '<div class="btn-group">{view} </div>',
+        'buttons'        => [
+            'view'   => function ($url, $model) {
+                return Html::a('<i class="fas fa-eye"></i>', $url, [
+                    'title' => 'Посмотреть',
+                    'class'=>'btn btn-sm btn-white'
+                ]);
+            },
+        ]
+
 ];
 ?>
 <div class="assignment-index">
-
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php Pjax::begin(); ?>
@@ -34,6 +42,7 @@ $columns[] = [
     GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' => ['class'=>'table table-striped table-bordered table-td-valign-middle dataTable no-footer dtr-inline' ],
         'columns' => $columns,
     ]);
     ?>

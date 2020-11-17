@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' => ['class'=>'table table-striped table-bordered table-td-valign-middle dataTable no-footer dtr-inline' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'username',
@@ -48,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data-method' => 'post',
                             'data-pjax' => '0',
                         ];
-                        return Html::a('<span class="glyphicon glyphicon-ok"></span>', $url, $options);
+                        return Html::a('<span class="fas fa-ok"></span>', $url, $options);
                     }
                     ]
                 ],
