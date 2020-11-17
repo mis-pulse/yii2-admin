@@ -11,7 +11,6 @@ use yii\web\AssetBundle;
  * @since 2.5
  */
 class AnimateAsset extends AssetBundle
-
 {
     /**
      * @inheritdoc
