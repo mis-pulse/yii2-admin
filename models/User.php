@@ -4,9 +4,12 @@ namespace mdm\admin\models;
 
 use mdm\admin\components\Configs;
 use mdm\admin\components\UserStatus;
+use pulse\worker\models\Worker;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -24,12 +27,14 @@ use yii\web\IdentityInterface;
  * @property integer $updated_at
  * @property string $password write-only password
  *
+ * @property array $statusList
  * @property UserProfile $profile
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 10;
+    const STATUS_CREATE = 9;
 
     /**
      * @inheritdoc
@@ -55,7 +60,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'in', 'range' => [UserStatus::ACTIVE, UserStatus::INACTIVE]],
+            ['status', 'in', 'range' => [UserStatus::ACTIVE, UserStatus::INACTIVE, UserStatus::CREATE]],
         ];
     }
 
@@ -87,6 +92,17 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByCreateUsername($username)
+    {
+        return static::findOne(['username' => $username, 'status' => UserStatus::CREATE]);
+    }
+
+    /**
      * Finds user by password reset token
      *
      * @param string $token password reset token
@@ -99,8 +115,8 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return static::findOne([
-                'password_reset_token' => $token,
-                'status' => UserStatus::ACTIVE,
+            'password_reset_token' => $token,
+            'status' => UserStatus::ACTIVE,
         ]);
     }
 
@@ -193,5 +209,29 @@ class User extends ActiveRecord implements IdentityInterface
     public static function getDb()
     {
         return Configs::userDb();
+    }
+
+    public function getStatusTitle(){
+        $statusList=self::getStatusList();
+        return $statusList[$this->status];
+    }
+
+    public static function getStatusList(){
+        return [
+            0=>'Деактивирован',
+            9=>'Создан',
+            10=>'Активен',
+        ];
+    }
+
+
+    /**
+     * Gets query for [[TelecomPatient]].
+     *
+     * @return ActiveQuery
+     */
+    public function getWorker() : ActiveQuery
+    {
+        return $this->hasOne(Worker::class, ['user_id' => 'id']);
     }
 }

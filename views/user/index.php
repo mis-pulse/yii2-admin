@@ -1,5 +1,6 @@
 <?php
 
+use mdm\admin\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use mdm\admin\components\Helper;
@@ -20,28 +21,29 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="panel-body">
-    <?=
-    GridView::widget([
+        <p>
+            <?= Html::a('Создать', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'tableOptions' => ['class'=>'table table-striped table-bordered table-td-valign-middle dataTable no-footer dtr-inline' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'username',
-            'email:email',
+            //'email:email',
+            'worker.fullName',
             [
                 'attribute' => 'status',
                 'value' => function($model) {
-                    return $model->status === 0 ? 'Inactive' : 'Active';
+                    return $model->statusTitle;
                 },
-                'filter' => [
-                    0 => 'Inactive',
-                    10 => 'Active'
-                ]
+                'filter' => User::getStatusList(),
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
+                //'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
+                'template' => '{view} {activate} {delete}',
                 'buttons' => [
                     'activate' => function($url, $model) {
                         if ($model->status === 10) {

@@ -14,7 +14,7 @@ class Login extends Model
     public $username;
     public $password;
     public $rememberMe = true;
-    
+
     private $_user = false;
 
     /**
@@ -76,5 +76,14 @@ class Login extends Model
         }
 
         return $this->_user;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+             'username' => Yii::t('rbac-admin', 'Username'),
+             'password' => Yii::t('rbac-admin', 'Password'),
+             'rememberMe' => Yii::t('rbac-admin', 'Remember me'),
+        ];
     }
 }

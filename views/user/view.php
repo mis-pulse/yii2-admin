@@ -47,12 +47,11 @@ $controllerId = $this->context->uniqueId . '/';
         ?>
     </p>
 
-    <?=
-    DetailView::widget([
+    <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'username',
-            'email:email',
+            'worker.fullName',
             'created_at:date',
             'status',
         ],

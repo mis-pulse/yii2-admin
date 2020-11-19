@@ -4,6 +4,8 @@ namespace mdm\admin\controllers;
 
 use mdm\admin\components\UserStatus;
 use mdm\admin\models\form\ChangePassword;
+use mdm\admin\models\form\Create;
+use mdm\admin\models\form\CreatePassword;
 use mdm\admin\models\form\Login;
 use mdm\admin\models\form\PasswordResetRequest;
 use mdm\admin\models\form\ResetPassword;
@@ -105,8 +107,9 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model=$this->findModel($id);
+        $model->status=UserStatus::INACTIVE;
+        $model->save();
         return $this->redirect(['index']);
     }
 
@@ -119,10 +122,10 @@ class UserController extends Controller
         if (!Yii::$app->getUser()->isGuest) {
             return $this->goHome();
         }
-
+        $this->layout='/login';
         $model = new Login();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->goHome();
         } else {
             return $this->render('login', [
                     'model' => $model,
@@ -145,16 +148,56 @@ class UserController extends Controller
      * Signup new user
      * @return string
      */
-    public function actionSignup()
+//    public function actionSignup()
+//    {
+//        $model = new Signup();
+//        if ($model->load(Yii::$app->getRequest()->post())) {
+//            if ($user = $model->signup()) {
+//                return $this->goHome();
+//            }
+//        }
+//
+//        return $this->render('signup', [
+//                'model' => $model,
+//        ]);
+//    }
+
+    /**
+     * Signup new user
+     * @return string
+     */
+    public function actionCreate()
     {
-        $model = new Signup();
+        $model = new Create();
         if ($model->load(Yii::$app->getRequest()->post())) {
-            if ($user = $model->signup()) {
-                return $this->goHome();
+            if ($user = $model->create()) {
+                return $this->redirect(['/rbac/user/index']);
             }
         }
 
-        return $this->render('signup', [
+        return $this->render('create', [
+                'model' => $model,
+        ]);
+    }
+
+    /**
+     * Signup new user
+     * @return string
+     */
+    public function actionCreatePassword()
+    {
+        if (!Yii::$app->getUser()->isGuest) {
+            return $this->goHome();
+        }
+        $this->layout='/login';
+        $model = new CreatePassword();
+        if ($model->load(Yii::$app->getRequest()->post())) {
+            if ($user = $model->create()) {
+                return $this->goBack(['user/login']);
+            }
+        }
+
+        return $this->render('createPassword', [
                 'model' => $model,
         ]);
     }

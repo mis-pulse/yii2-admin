@@ -12,4 +12,5 @@ class UserStatus
 {
     const INACTIVE = 0;
     const ACTIVE = 10;
+    const CREATE = 9;
 }
