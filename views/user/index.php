@@ -11,10 +11,15 @@ use mdm\admin\components\Helper;
 $this->title = Yii::t('rbac-admin', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+<h1 class="page-header"><?= Html::encode($this->params['label']) ?></h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title"><?= Html::encode($this->title) ?></h1>
+        <div class="panel-heading-btn">
+            <a href="#" class="btn btn-xs btn-icon btn-circle btn-primary" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+        </div>
+    </div>
+    <div class="panel-body">
     <?=
     GridView::widget([
         'dataProvider' => $dataProvider,
@@ -27,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'status',
                 'value' => function($model) {
-                    return $model->status == 0 ? 'Inactive' : 'Active';
+                    return $model->status === 0 ? 'Inactive' : 'Active';
                 },
                 'filter' => [
                     0 => 'Inactive',
@@ -39,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
                 'buttons' => [
                     'activate' => function($url, $model) {
-                        if ($model->status == 10) {
+                        if ($model->status === 10) {
                             return '';
                         }
                         $options = [
@@ -50,10 +55,20 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data-pjax' => '0',
                         ];
                         return Html::a('<span class="fas fa-ok"></span>', $url, $options);
-                    }
+                    },
+                    'view'   => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, [
+                            'title' => 'Посмотреть',
+                            'class'=>'btn btn-sm btn-white'
+                        ]);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<span class="fas fa-trash"></span>', $url, ['title' => 'Удалить','data-confirm' => 'Вы уверены, что хотите удалить этот элемент?','data-method' => 'post','class'=>'btn btn-sm btn-danger']);
+                    },
                     ]
                 ],
             ],
         ]);
         ?>
+</div>
 </div>

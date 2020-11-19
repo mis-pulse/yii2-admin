@@ -13,9 +13,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $controllerId = $this->context->uniqueId . '/';
 ?>
-<div class="user-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title"><?= Html::encode($this->title) ?></h1>
+        <div class="panel-heading-btn">
+            <a href="#" class="btn btn-xs btn-icon btn-circle btn-primary" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+        </div>
+    </div>
+    <div class="panel-body">
 
     <p>
         <?php
@@ -54,4 +59,5 @@ $controllerId = $this->context->uniqueId . '/';
     ])
     ?>
 
+</div>
 </div>

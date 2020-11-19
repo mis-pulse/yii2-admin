@@ -17,9 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Admin' => 'Управление доступом',
     'Assignments' => 'Назначения',
-    'Users' => 'Пользователи',
-    'User' => 'Пользователь',
+    'Users' => 'Учетные записи',
+    'User' => 'Учетная запись',
     'Available' => 'Доступно',
     'Assigned' => 'Назначено',
     'Create' => 'Создать',

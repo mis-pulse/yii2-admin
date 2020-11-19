@@ -25,8 +25,15 @@ $this->registerJs("var _opts = {$opts};");
 $this->registerJs($this->render('_script.js'));
 $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>';
 ?>
-<div class="auth-item-view">
-    <h1><?=Html::encode($this->title);?></h1>
+<h1 class="page-header"><?= Html::encode($this->params['label']) ?></h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1 class="panel-title"><?= Html::encode($this->title) ?></h1>
+        <div class="panel-heading-btn">
+            <a href="#" class="btn btn-xs btn-icon btn-circle btn-primary" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+        </div>
+    </div>
+    <div class="panel-body">
     <p>
         <?=Html::a(Yii::t('rbac-admin', 'Update'), ['update', 'id' => $model->name], ['class' => 'btn btn-primary']);?>
         <?=Html::a(Yii::t('rbac-admin', 'Delete'), ['delete', 'id' => $model->name], [
@@ -77,4 +84,5 @@ DetailView::widget([
             <select multiple size="20" class="form-control list" data-target="assigned"></select>
         </div>
     </div>
+</div>
 </div>

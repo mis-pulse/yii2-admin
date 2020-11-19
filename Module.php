@@ -85,6 +85,10 @@ class Module extends \yii\base\Module
      */
     public $defaultUrlLabel;
 
+    public $params=[
+        'label'=>'Управление доступом',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -174,7 +178,7 @@ class Module extends \yii\base\Module
         if (parent::beforeAction($action)) {
             /* @var $action \yii\base\Action */
             $view = $action->controller->getView();
-
+            $view->params['label']=$this->params['label'];
             $view->params['breadcrumbs'][] = [
                 'label' => ($this->defaultUrlLabel ?: Yii::t('rbac-admin', 'Admin')),
                 'url' => ['/' . ($this->defaultUrl ?: $this->uniqueId)],
