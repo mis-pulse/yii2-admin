@@ -10,6 +10,7 @@ use mdm\admin\models\form\Login;
 use mdm\admin\models\form\PasswordResetRequest;
 use mdm\admin\models\form\ResetPassword;
 use mdm\admin\models\form\Signup;
+use mdm\admin\models\form\Update;
 use mdm\admin\models\searchs\User as UserSearch;
 use mdm\admin\models\User;
 use Yii;
@@ -20,6 +21,7 @@ use yii\mail\BaseMailer;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * User controller
@@ -40,6 +42,7 @@ class UserController extends Controller
                     'delete' => ['post'],
                     'logout' => ['post'],
                     'activate' => ['post'],
+                    'reset' => ['post'],
                 ],
             ],
         ];
@@ -82,8 +85,42 @@ class UserController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Signup new user
+     * @return string
+     */
+    public function actionCreate()
+    {
+        $model = new Create();
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->create()) {
+            return $this->redirect(['/rbac/user/index']);
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays a single User model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+
+        $model= Update::find()->where(['id'=>$id])->one();
+
+        if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
+            return $this->redirect(['/rbac/user/index']);
+        }
+        return $this->render('update', [
+            'model' => $model,
         ]);
     }
 
@@ -95,8 +132,45 @@ class UserController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-                'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
+    }
+
+
+    /**
+     * Activate new user
+     * @param integer $id
+     * @return Response
+     * @throws UserException
+     * @throws NotFoundHttpException
+     */
+    public function actionActivate($id): Response
+    {
+        /* @var $user User */
+        $user = $this->findModel($id);
+        if ($user->status === UserStatus::INACTIVE) {
+            $user->status = UserStatus::CREATE;
+            if ($user->save()) {
+                return $this->redirect(['index']);
+            }
+            $errors = $user->firstErrors;
+            throw new UserException(reset($errors));
+        }
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Reset password an existing User model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionReset($id)
+    {
+        $model=$this->findModel($id);
+        $model->status=UserStatus::CREATE;
+        $model->save();
+        return $this->redirect(['index']);
     }
 
     /**
@@ -162,23 +236,7 @@ class UserController extends Controller
 //        ]);
 //    }
 
-    /**
-     * Signup new user
-     * @return string
-     */
-    public function actionCreate()
-    {
-        $model = new Create();
-        if ($model->load(Yii::$app->getRequest()->post())) {
-            if ($user = $model->create()) {
-                return $this->redirect(['/rbac/user/index']);
-            }
-        }
 
-        return $this->render('create', [
-                'model' => $model,
-        ]);
-    }
 
     /**
      * Signup new user
@@ -263,28 +321,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Activate new user
-     * @param integer $id
-     * @return type
-     * @throws UserException
-     * @throws NotFoundHttpException
-     */
-    public function actionActivate($id)
-    {
-        /* @var $user User */
-        $user = $this->findModel($id);
-        if ($user->status == UserStatus::INACTIVE) {
-            $user->status = UserStatus::ACTIVE;
-            if ($user->save()) {
-                return $this->goHome();
-            } else {
-                $errors = $user->firstErrors;
-                throw new UserException(reset($errors));
-            }
-        }
-        return $this->goHome();
-    }
+
 
     /**
      * Finds the User model based on its primary key value.

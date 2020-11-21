@@ -30,12 +30,9 @@ class Create extends Model
             ['username', 'required'],
             ['username', 'unique', 'targetClass' => $class, 'message' => 'Этот логин уже используется'],
             ['username', 'string', 'min' => 2, 'max' => 255],
+
             ['worker_id','integer'],
-            ['worker_id', 'exist',
-                'targetClass' => Worker::class,
-                'filter' => ['active' => 1],
-                'message' => 'Сотрудник не найден'
-            ],
+            ['worker_id', 'exist', 'skipOnError' => true, 'targetClass' => Worker::class, 'targetAttribute' => ['worker_id' => 'id'],'filter' => ['active' => 1]],
 
             ['password', 'string', 'min' => 6],
             ['retypePassword', 'compare', 'compareAttribute' => 'password'],
@@ -51,7 +48,7 @@ class Create extends Model
     {
         if ($this->validate()) {
             $class = Yii::$app->getUser()->identityClass ? : 'mdm\admin\models\User';
-            /** @var \app\models\User $user */
+            /** @var User $user */
             $user = new $class();
             $user->username = $this->username;
             //$user->email = $this->email;
@@ -67,6 +64,9 @@ class Create extends Model
             $user->generateAuthKey();
 
             if ($user->save()) {
+                $worker=Worker::find()->where(['id'=>$this->worker_id])->limit(1)->one();
+                $worker->user_id=$user->id;
+                $worker->save();
                 return $user;
             }
         }

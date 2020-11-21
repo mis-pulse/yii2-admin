@@ -50,7 +50,7 @@ class CreatePassword extends Model
         if ($this->validate()) {
             /** @var User $class */
             $class = Yii::$app->getUser()->identityClass ? : 'mdm\admin\models\User';
-            /** @var \app\models\User $user */
+            /** @var User $user */
             $user = $class::findByCreateUsername($this->username);
             //$user->email = $this->email;
             $user->status = ArrayHelper::getValue(Yii::$app->params, 'user.defaultStatus', UserStatus::ACTIVE);

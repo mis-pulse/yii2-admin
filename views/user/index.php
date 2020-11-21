@@ -43,10 +43,10 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 //'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
-                'template' => '{view} {activate} {delete}',
+                'template' => '{view} {update} {activate} {reset} {delete}',
                 'buttons' => [
                     'activate' => function($url, $model) {
-                        if ($model->status === 10) {
+                        if ($model->status !== 0) {
                             return '';
                         }
                         $options = [
@@ -55,8 +55,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data-confirm' => Yii::t('rbac-admin', 'Are you sure you want to activate this user?'),
                             'data-method' => 'post',
                             'data-pjax' => '0',
+                            'class'=>'btn btn-sm btn-success'
                         ];
-                        return Html::a('<span class="fas fa-ok"></span>', $url, $options);
+                        return Html::a('<span class="fas fa-check"></span>', $url, $options);
                     },
                     'view'   => function ($url, $model) {
                         return Html::a('<i class="fas fa-eye"></i>', $url, [
@@ -64,7 +65,22 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class'=>'btn btn-sm btn-white'
                         ]);
                     },
+                    'update'   => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, [
+                            'title' => 'Изменить',
+                            'class'=>'btn btn-sm btn-primary'
+                        ]);
+                    },
+                    'reset' => function ($url, $model) {
+                        if ($model->status !== 10) {
+                            return '';
+                        }
+                        return Html::a('<span class="fas fa-redo"></span>', $url, ['title' => 'Сбросить пароль','data-confirm' => 'Вы уверены, что хотите сбросить пароль?','data-method' => 'post','class'=>'btn btn-sm btn-warning']);
+                    },
                     'delete' => function ($url, $model) {
+                        if ($model->status === 0) {
+                            return '';
+                        }
                         return Html::a('<span class="fas fa-trash"></span>', $url, ['title' => 'Удалить','data-confirm' => 'Вы уверены, что хотите удалить этот элемент?','data-method' => 'post','class'=>'btn btn-sm btn-danger']);
                     },
                     ]
