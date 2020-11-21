@@ -27,12 +27,26 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' => function($model, $index, $widget, $grid){
+            return ['class'=>'table-'.$model->statusClass];
+        },
+
         'tableOptions' => ['class'=>'table table-striped table-bordered table-td-valign-middle dataTable no-footer dtr-inline' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'username',
             //'email:email',
-            'worker.fullName',
+            [
+                'attribute' => 'worker_id',
+                'format'=>'raw',
+                'value' => function($model) {
+                    if (!$model->worker){
+                        return '';
+                    }
+                    return Html::a($model->worker->fullName,['/worker/update','id'=>$model->worker->id]);
+                },
+                'filter' => \pulse\worker\models\WorkerSearch::selectWorkersAll(),
+            ],
             [
                 'attribute' => 'status',
                 'value' => function($model) {
@@ -43,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 //'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
-                'template' => '{view} {update} {activate} {reset} {delete}',
+                'template' => '{update} {activate} {reset} {delete}',
                 'buttons' => [
                     'activate' => function($url, $model) {
                         if ($model->status !== 0) {
@@ -59,12 +73,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ];
                         return Html::a('<span class="fas fa-check"></span>', $url, $options);
                     },
-                    'view'   => function ($url, $model) {
-                        return Html::a('<i class="fas fa-eye"></i>', $url, [
-                            'title' => 'Посмотреть',
-                            'class'=>'btn btn-sm btn-white'
-                        ]);
-                    },
+                    //View убрал, т.к. хз что в нём смотреть...
+//                    'view'   => function ($url, $model) {
+//                        return Html::a('<i class="fas fa-eye"></i>', $url, [
+//                            'title' => 'Посмотреть',
+//                            'class'=>'btn btn-sm btn-white'
+//                        ]);
+//                    },
                     'update'   => function ($url, $model) {
                         return Html::a('<i class="fas fa-edit"></i>', $url, [
                             'title' => 'Изменить',

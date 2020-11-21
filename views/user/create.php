@@ -16,6 +16,7 @@ $this->title = Yii::t('rbac-admin', 'Create user');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1 class="page-header"><?= Html::encode($this->params['label']) ?></h1>
+<?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h1 class="panel-title"><?= Html::encode($this->title) ?></h1>
@@ -24,22 +25,27 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="panel-body">
-
-    <p>Введите логин для новой учетной записи и сообщите его сотруднику</p>
-    <p>Пароль вводить не обязательно. Пользователь сам сможет создать его при входе в систему</p>
-    <?= Html::errorSummary($model)?>
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
-            <?= $form->field($model, 'username')?>
-            <?= $form->field($model, 'worker_id')->dropDownList(WorkerSearch::selectWorkersActive(),['prompt' => 'Выберите сотрудника, если необходимо'])?>
-            <?= $form->field($model, 'password')->input('password',['data-toggle'=>'password']) ?>
-            <?= $form->field($model, 'retypePassword')->input('password',['data-toggle'=>'password']) ?>
-            <div class="form-group">
-                <?= Html::submitButton(Yii::t('rbac-admin', 'Create'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <p>Введите логин для новой учетной записи и сообщите его сотруднику</p>
+        <p>Пароль вводить не обязательно. Пользователь сам сможет создать его при входе в систему</p>
+        <?= Html::errorSummary($model)?>
+        <div class="row">
+            <div class="col-md-6">
+                <?= $form->field($model, 'username')?>
             </div>
-            <?php ActiveForm::end(); ?>
+            <div class="col-md-6">
+                <?= $form->field($model, 'worker_id')->dropDownList(WorkerSearch::selectWorkersActive(),['prompt' => 'Выберите сотрудника, если необходимо'])?>
+            </div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'password')->input('password',['data-toggle'=>'password','autocomplete'=>"new-password"]) ?>
+            </div>
+            <div class="col-md-6">
+                <?= $form->field($model, 'retypePassword')->input('password',['data-toggle'=>'password','autocomplete'=>"new-password"]) ?>
+            </div>
         </div>
     </div>
+    <div class="panel-footer">
+        <?= Html::a('Назад', ['index'], ['class' => 'btn btn-white']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+    </div>
 </div>
-</div>
+<?php ActiveForm::end(); ?>

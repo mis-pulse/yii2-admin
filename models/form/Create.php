@@ -64,14 +64,24 @@ class Create extends Model
             $user->generateAuthKey();
 
             if ($user->save()) {
-                $worker=Worker::find()->where(['id'=>$this->worker_id])->limit(1)->one();
-                $worker->user_id=$user->id;
-                $worker->save();
+                $this->updateWorker();
                 return $user;
             }
         }
 
         return null;
+    }
+
+    public function updateWorker(){
+        //TODO:: Можно ли изменять сотрудника?
+        if ($this->worker_id){
+            $worker=Worker::find()->where(['id'=>$this->worker_id])->limit(1)->one();
+            $worker->user_id=$this->_user->id;
+            if ($this->gpassword){
+                $worker->gpassword=$this->gpassword;
+            }
+            $worker->save();
+        }
     }
 
     public function attributeLabels()
@@ -81,6 +91,7 @@ class Create extends Model
             'password' => Yii::t('rbac-admin', 'Password'),
             'worker_id' => Yii::t('rbac-admin', 'Worker'),
             'retypePassword' => Yii::t('rbac-admin', 'Retype password'),
+            'gpassword' => Yii::t('rbac-admin', 'gpassword'),
         ];
     }
 }

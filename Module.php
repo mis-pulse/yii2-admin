@@ -41,7 +41,7 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public $defaultRoute = 'assignment';
+    public $defaultRoute = 'user';
     /**
      * @var array Nav bar items.
      */

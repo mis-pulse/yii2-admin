@@ -13,17 +13,17 @@ class User extends Model
 {
     public $id;
     public $username;
-    public $email;
     public $status;
-    
+    public $worker_id;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'status',], 'integer'],
-            [['username', 'email'], 'safe'],
+            [['id', 'status','worker_id'], 'integer'],
+            [['username'], 'safe'],
         ];
     }
 
@@ -38,10 +38,11 @@ class User extends Model
     {
         /* @var $query \yii\db\ActiveQuery */
         $class = Yii::$app->getUser()->identityClass ? : 'mdm\admin\models\User';
-        $query = $class::find();
+        $query = $class::find()->joinWith('worker');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['status' => SORT_DESC,'username'=>SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -51,12 +52,12 @@ class User extends Model
         }
 
         $query->andFilterWhere([
-            'id' => $this->id,
+            'user.id' => $this->id,
             'status' => $this->status,
+            'worker.id' => $this->worker_id,
         ]);
 
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'email', $this->email]);
+        $query->andFilterWhere(['like', 'username', $this->username]);
 
         return $dataProvider;
     }

@@ -29,6 +29,7 @@ use yii\web\IdentityInterface;
  *
  * @property array $statusList
  * @property UserProfile $profile
+ * @property Worker $worker
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -219,11 +220,30 @@ class User extends ActiveRecord implements IdentityInterface
     public static function getStatusList(){
         return [
             0=>'Деактивирован',
-            9=>'Создан',
+            9=>'Без пароля',
             10=>'Активен',
         ];
     }
 
+    public function getStatusClass(){
+        $array=[
+            0=>'danger',
+            9=>'warning',
+            10=>'success',
+        ];
+        return $array[$this->status];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => Yii::t('rbac-admin', 'Username'),
+            'worker_id' => Yii::t('rbac-admin', 'Worker'),
+            'status' => Yii::t('rbac-admin', 'Status'),
+            'gpassword' => Yii::t('rbac-admin', 'gpassword'),
+            'worker.fullName' => Yii::t('rbac-admin', 'fullName'),
+        ];
+    }
 
     /**
      * Gets query for [[TelecomPatient]].
