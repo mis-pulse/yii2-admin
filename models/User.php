@@ -12,7 +12,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-
+use simialbi\yii2\models\UserInterface;
 /**
  * User model
  *
@@ -253,5 +253,29 @@ class User extends ActiveRecord implements IdentityInterface
     public function getWorker() : ActiveQuery
     {
         return $this->hasOne(Worker::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getImage() {
+        //return $this->image;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName() {
+        if ($this->worker){
+            return $this->worker->fullNameActive.'['.$this->username.']';
+        }
+        return trim($this->username);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function findIdentities() {
+        return static::find()->all();
     }
 }
